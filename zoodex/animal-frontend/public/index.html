@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZooDex - Animal Adventure for Kids!</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+    >
+    
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FFC107;
+            --background-color: #E3F2FD;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), #2E7D32);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #81C784);
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animal-of-day {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            margin: 30px auto;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .animal-of-day .animal-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 500px;
+        }
+
+        .btn-upload {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-upload:hover {
+            background-color: #45a049;
+        }
+
+        #liveCamera, #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), #2E7D32);
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        .result {
+            background-color: #E8F5E9;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ZooDex</a>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="header">
+        <div class="container">
+            <h1>ZooDex</h1>
+            <p>Your Kid-Friendly Animal Learning Platform</p>
+        </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="container text-center my-4">
+        <p class="lead">
+            Welcome to ZooDex! Scan animals to learn fascinating facts in a fun and interactive way. 
+            Safety warnings for dangerous animals ensure your child learns in a secure environment.
+        </p>
+    </div>
+
+    <!-- Animal of the Day Section -->
+    <div class="container animal-of-day" id="animal-of-day">
+        <h2>Animal of the Day</h2>
+        <img src="" alt="Animal of the Day" class="animal-image" id="animalOfDayImage">
+        <h3 id="animalOfDayName">Loading...</h3>
+        <p id="animalOfDayFact">Discovering today's amazing animal!</p>
+    </div>
+
+    <!-- Animal Scanner Section -->
+    <div class="container" id="animal-scanner">
+        <div class="upload-card">
+            <h2 class="text-center mb-4">Scan an Animal</h2>
+            
+            <!-- Scan Method Tabs -->
+            <ul class="nav nav-tabs" id="scanMethodTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-pane" type="button" role="tab">Upload Image</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera-pane" type="button" role="tab">Take Photo</button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content mt-3" id="scanMethodContent">
+                <!-- Upload Image Pane -->
+                <div class="tab-pane fade show active" id="upload-pane" role="tabpanel">
+                    <form id="uploadForm">
+                        <div class="mb-3">
+                            <input type="file" id="fileInput" class="form-control" accept="image/*" onchange="previewImage('file')" />
+                        </div>
+                        <div class="text-center" id="imagePreviewContainer" style="display: none; margin-bottom: 20px;">
+                            <img id="imagePreview" alt="Selected Image Preview" style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 10px;" />
+                        </div>
+                        <button type="button" class="btn btn-upload w-100" onclick="uploadFile('file')">Upload and Predict</button>
+                    </form>
+                </div>
+
+                <!-- Camera Scan Pane -->
+                <div class="tab-pane fade" id="camera-pane" role="tabpanel">
+                    <div class="text-center">
+                        <video id="liveCamera" autoplay playsinline></video>
+                        <div class="d-grid gap-2 mt-3">
+                            <button class="btn btn-upload" onclick="startCamera()">Start Camera</button>
+                            <button class="btn btn-upload" onclick="captureImage()">Capture Image</button>
+                            <button type="button" class="btn btn-upload" onclick="uploadFile('camera')">Upload and Predict</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p id="result" class="result text-center"></p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 ZooDex - Fun Learning for Kids</p>
+    </footer>
+
+    <!-- Bootstrap Bundle JS -->
+    <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <script>
+        // Animal of the Day Data
+        const animalsOfDay = [
+            {
+                name: "Red Panda",
+                image: "https://example.com/red-panda.jpg",
+                fact: "Red pandas are adorable mammals that live in the forests of China and Nepal. Despite their name, they're not related to giant pandas!"
+            },
+            {
+                name: "Emperor Penguin",
+                image: "https://example.com/emperor-penguin.jpg",
+                fact: "Emperor penguins are the largest penguin species and can withstand temperatures as low as -60°C in Antarctica!"
+            },
+            {
+                name: "Dolphin",
+                image: "C:\Users\HP\Desktop\dolphin.jpg",
+                fact: "Dolphins are super smart marine mammals that use echolocation to navigate and communicate underwater."
+            }
+        ];
+
+        // Function to set Animal of the Day
+        function setAnimalOfDay() {
+            const today = new Date();
+            const animalIndex = today.getDate() % animalsOfDay.length;
+            const animal = animalsOfDay[animalIndex];
+
+            document.getElementById('animalOfDayImage').src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNIYE7xIgg_xlKIdhUR_hOrKeakhWvC8p9qQ&s";
+            document.getElementById('animalOfDayName').textContent = animal.name;
+            document.getElementById('animalOfDayFact').textContent = animal.fact;
+        }
+
+        // Camera-related functions
+        function startCamera() {
+            const video = document.getElementById('liveCamera');
+            
+            const constraints = {
+                video: { 
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    video.play().catch(e => {
+                        console.error('Error playing video:', e);
+                        alert('Could not start camera. Please check permissions.');
+                    });
+                })
+                .catch(function(error) {
+                    console.log("Detailed camera access error: ", error);
+                    if (error.name === 'NotAllowedError') {
+                        alert("Camera access was denied. Please check your browser and device settings.");
+                    } else if (error.name === 'NotFoundError') {
+                        alert("No camera found on this device.");
+                    } else {
+                        alert("Error accessing camera: " + error.message);
+                    }
+                });
+        }
+
+        function captureImage() {
+            const video = document.getElementById('liveCamera');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const dataURL = canvas.toDataURL('image/jpeg');
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = dataURL;
+            document.getElementById('imagePreviewContainer').style.display = 'block';
+
+            // Convert dataURL to blob for upload
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    console.error('Failed to create blob from canvas');
+                    alert('Failed to prepare image for upload');
+                    return;
+                }
+
+                const file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                document.getElementById('fileInput').files = dataTransfer.files;
+            }, 'image/jpeg');
+        }
+
+        function previewImage(source) {
+            const fileInput = document.getElementById('fileInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                imagePreviewContainer.style.display = 'none';
+            }
+        }
+
+        function uploadFile(source) {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file or capture an image first');
+                return;
+            }
+
+            // Check file size (optional, but recommended)
+            const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSizeInBytes) {
+                alert('File is too large. Please upload an image smaller than 5MB.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Show loading state
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = 'Processing... Please wait';
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.animal_name) {
+                    resultElement.textContent = `Predicted animal: ${data.animal_name}`;
+                } else {
+                    resultElement.textContent = 'Unable to identify the animal';
+                }
+            })
+            .catch(error => {
+                console.error('Full error details:', error);
+                resultElement.textContent = `Error: ${error.message || 'Unable to process image'}`;
+            });
+        }
+
+        // Call the function when the page loads
+        window.onload = function() {
+            setAnimalOfDay();
+        }
+    </script>
+</body>
+</html>

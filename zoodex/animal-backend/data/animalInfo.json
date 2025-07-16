@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Lion",
+    "image": "lion.jpg",
+    "fact": "Lions live in groups called prides."
+  },
+  {
+    "name": "Tiger",
+    "image": "tiger.jpg",
+    "fact": "Tigers are the largest cat species."
+  },
+  {
+    "name": "Elephant",
+    "image": "elephant.jpg",
+    "fact": "Elephants have excellent memory."
+  },
+  {
+    "name": "Zebra",
+    "image": "zebra.jpg",
+    "fact": "Each zebra has a unique pattern of stripes."
+  },
+  {
+    "name": "Giraffe",
+    "image": "giraffe.jpg",
+    "fact": "Giraffes have the longest necks among animals."
+  }
+]

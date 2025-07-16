@@ -1,0 +1,10 @@
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        console.log('Camera stream started.');
+        videoElement.srcObject = stream;
+        window.stream = stream;
+    })
+    .catch(error => {
+        console.error('Error accessing the camera:', error);
+        alert('Could not access camera. Please grant permission.');
+    });

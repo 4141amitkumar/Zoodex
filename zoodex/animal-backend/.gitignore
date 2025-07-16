@@ -1,0 +1,15 @@
+# Node.js
+node_modules/
+
+# Python
+python/venv/
+python/__pycache__/
+python/model.h5
+python/dataset/
+
+# Logs
+*.log
+
+# System
+.DS_Store
+.env

@@ -1,0 +1,15 @@
+/* src/components/Home.css */
+.home-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.home-header {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.home-description {
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
